@@ -1,0 +1,32 @@
+# Virtual environment
+env/
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Local environment variables
+.env
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Data (raw is downloaded / reproducible)
+data/raw/
+
+# Optional: ignore processed data if it gets too big
+# data/processed/
+
+# Misc temporary files
+misc/
+
+# Editable packages: 'src'
+*.egg-info/
