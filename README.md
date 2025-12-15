@@ -76,7 +76,7 @@ is stored in:
 
 This is the **complete** end-to-end design of the entire project.
 
-## **Phase 1 – Problem Definition & Analytical Framework**
+## **Phase 1 – Problem Definition & Analytical Framework** ✔️ Completed
 
 - Define central question + sub-questions  
 - Establish main KPIs (return, volatility, Sharpe, drawdown, VaR, CVaR)  
@@ -86,7 +86,7 @@ This is the **complete** end-to-end design of the entire project.
 
 ---
 
-## **Phase 2 – Asset Universe Selection**
+## **Phase 2 – Asset Universe Selection** ✔️ Completed
 
 - Select diversified multi-asset universe  
 - Ensure cross-asset exposure: equities, indices, FX, commodities, bonds  
@@ -95,7 +95,7 @@ This is the **complete** end-to-end design of the entire project.
 
 ---
 
-## **Phase 3 – Environment, Data Acquisition & Cleaning**
+## **Phase 3 – Environment, Data Acquisition & Cleaning** ✔️ Completed
 
 ### **3.1 Project Environment Setup**
 - Create environment, folder structure, `src/`, `data/`, `notebooks/`  
@@ -116,7 +116,7 @@ This is the **complete** end-to-end design of the entire project.
 
 ---
 
-## **Phase 4 – Portfolio Construction & Performance Metrics**
+## **Phase 4 – Portfolio Construction & Performance Metrics** ✔️ Completed
 
 Implemented in `02_portfolio_construction.ipynb`.
 
@@ -146,7 +146,7 @@ Full quant-standard KPIs:
 
 ---
 
-## **Phase 5 – Risk Analytics & Diagnostics**
+## **Phase 5 – Risk Analytics & Diagnostics** 🔄 In-progress
 
 To be implemented in `03_analysis_and_risk.ipynb`.
 
@@ -161,7 +161,7 @@ Includes:
 
 ---
 
-## **Phase 6 – Portfolio Optimisation & Rebalancing**
+## **Phase 6 – Portfolio Optimisation & Rebalancing** 🔜 Upcoming
 
 To be implemented in `04_optimization.ipynb`.
 
@@ -175,7 +175,7 @@ Includes:
 
 ---
 
-## **Phase 7 – Dashboard & Reporting Layer**
+## **Phase 7 – Dashboard & Reporting Layer** 🔜 Upcoming
 
 Planned through Power BI, Plotly, or a lightweight web app.
 
