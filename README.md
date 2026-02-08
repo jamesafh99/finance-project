@@ -1,8 +1,9 @@
-# Portfolio Risk & Return Analytics – Mixed Asset Portfolio (2019-2024)
+# Portfolio Risk & Return Analytics – Mixed Asset Portfolio (2019–2024)
 
-This project builds an end-to-end pipeline in Python to analyse the risk–return profile of a mixed-asset portfolio. It covers data acquisition, cleaning, portfolio construction, performance metrics and (in later phases) risk analytics, optimisation and dashboarding.
+This project implements an end-to-end Python pipeline to analyse the **risk–return profile of a diversified, mixed-asset portfolio** using daily data.  
+It covers data acquisition, cleaning, portfolio construction, performance measurement, and advanced risk analytics, with later phases focused on optimisation and reporting.
 
-The work is structured in clearly defined **phases**, from problem definition to final visualisation, and is designed to be reproducible.
+The work is organised into clearly defined **analytical phases**, designed to be transparent, reproducible and extensible, following a professional quantitative research workflow.
 
 ---
 
@@ -10,109 +11,90 @@ The work is structured in clearly defined **phases**, from problem definition to
 
 **Central question**
 
-> How does the return and risk of a simulated mixed-asset portfolio evolve during 2019-2024, and what simple rebalancing adjustments could improve its risk-adjusted efficiency?
+> How does the return and risk of a simulated mixed-asset portfolio evolve during 2019–2024, and which simple rebalancing adjustments could improve its risk-adjusted efficiency?
 
 **Sub-questions**
 
-1. How did the portfolio and each individual asset perform during 2019-2024 in terms of return?
-2. What level of risk did the portfolio assume and how is it reflected in volatility, drawdown and other key metrics?
-3. Is there true diversification between assets, or is risk concentrated through correlations across instruments?
-4. Was the portfolio efficient in risk-adjusted terms (Sharpe, Sortino, etc.)?
-5. Is it advisable to rebalance the portfolio, and what simple change in weights would most likely improve its efficiency?
+1. How did the portfolio and each individual asset perform during 2019–2024?
+2. What level of risk did the portfolio assume, as reflected in volatility, drawdowns and tail-risk metrics?
+3. Is diversification effective, or is risk concentrated across correlated instruments?
+4. How efficient is the portfolio in risk-adjusted terms (Sharpe, CVaR)?
+5. Which simple allocation adjustments could plausibly improve efficiency?
 
-The project is implemented in Python using daily data, with a baseline **equally weighted, long-only, no-leverage** portfolio as the starting point.
+The baseline setup is an **equally weighted, long-only, no-leverage portfolio**, used as a neutral benchmark throughout the analysis.
 
 ---
 
 ## 📊 Asset Universe
 
-The portfolio uses a diversified universe across multiple asset classes. Tickers are downloaded via `yfinance` and stored under `data/raw_prices`.
+The portfolio uses a **small but diversified universe** across major asset classes.  
+All prices are expressed in **USD** and downloaded via `yfinance`.
 
-**Equities**
+**Equity Index (ETF)**
 
-- `MSFT` – Microsoft  
-- `AMZN` – Amazon  
-- `NVDA` – NVIDIA  
-- `ORCL` – Oracle  
-- `JPM` – JPMorgan Chase
+- `SPY` – S&P 500 ETF
 
-**Indices**
+**Fixed Income (ETFs)**
 
-- `^GSPC` – S&P 500  
-- `^IXIC` – Nasdaq Composite  
-- `^FTSE` – FTSE 100
+- `IEF` – iShares 7–10 Year US Treasury Bond ETF
+
+**Commodities (ETFs)**
+
+- `GLD` – Gold ETF  
+- `USO` – Oil ETF  
+- `UNG` – Natural Gas ETF
 
 **FX**
 
-- `EURUSD=X` → stored as `EURUSD_prices.csv`  
-- `GBPUSD=X` → stored as `GBPUSD_prices.csv`  
-- `USDJPY=X` → stored as `USDJPY_prices.csv`
-
-**Commodities (front futures)**
-
-- `CL=F` – Crude Oil (WTI)  
-- `BZ=F` – Brent  
-- `NG=F` – Natural Gas  
-- `GC=F` – Gold  
-- `SI=F` – Silver
-
-**Fixed Income (proxies via ETFs)**
-
-- `TLT` – Long-term US Treasuries  
-- `IEF` – Intermediate-term US Treasuries
+- `EURUSD=X` – EUR/USD  
+- `USDJPY=X` – USD/JPY  
 
 **Risk-free rate proxy**
 
-- `^IRX` – 13-week US T-Bill yield, used as **risk-free rate** proxy.
+- `^IRX` – 13-week US Treasury Bill yield, used exclusively as a **risk-free rate proxy** (stored separately from price data).
 
-The consolidated universe (including metadata such as ticker, asset class and descriptions)
-is stored in:
+Clean, aligned price data and the risk-free series are stored under:
 
 - `data/processed/asset_universe.csv`
+- `data/processed/risk_free.csv`
 
 ---
 
-# 🏗️ Project Roadmap
+## 🏗️ Project Roadmap
 
-This is the **complete** end-to-end design of the entire project.
+This project follows a structured, end-to-end quantitative research workflow.
+
+---
 
 ## **Phase 1 – Problem Definition & Analytical Framework**
 
-- Define central question + sub-questions  
-- Establish main KPIs (return, volatility, Sharpe, drawdown, VaR, CVaR)  
-- Choose timeline (focus on 2019-2024 performance)  
-- Define modelling assumptions (daily data, long-only, equal weights benchmark)  
-- Define full project roadmap for Phases 1–7  
+- Define central research question and scope  
+- Select core KPIs (return, volatility, Sharpe, drawdown, VaR, CVaR)  
+- Fix modelling assumptions (daily data, long-only, equal-weight baseline)  
+- Design full project roadmap  
 
 ---
 
 ## **Phase 2 – Asset Universe Selection**
 
-- Select diversified multi-asset universe  
-- Ensure cross-asset exposure: equities, indices, FX, commodities, bonds  
-- Validate data availability, liquidity, consistency  
-- Create `asset_universe.csv` database
+- Construct a diversified multi-asset universe  
+- Avoid redundant exposures and excessive correlation  
+- Ensure consistent currency denomination (USD)  
+- Validate data availability and liquidity  
 
 ---
 
-## **Phase 3 – Environment, Data Acquisition & Cleaning**
+## **Phase 3 – Data Acquisition & Cleaning**
 
-### **3.1 Project Environment Setup**
-- Create environment, folder structure, `src/`, `data/`, `notebooks/`  
-- Configure `.env`, `.gitignore`, requirements  
+### **3.1 Data Download – `00_data_download.ipynb`**
+- Download daily adjusted prices for each asset  
+- Save one CSV per instrument  
+- Download ^IRX separately as risk-free rate proxy  
 
-### **3.2 Data Download – `00_data_download.ipynb`**
-- Download daily historical data for every ticker  
-- Save one CSV per ticker in `raw_prices/`  
-- Add ^IRX as risk-free rate proxy  
-- Update `asset_universe.csv`  
-
-### **3.3 Data Cleaning – `01_data_cleaning.ipynb`**
-- Align all assets to a common daily calendar  
-- Handle missing values, non-trading days  
-- Validate and sanity-check series  
-- Compute clean simple returns (vectorized with pandas)  
-- Produce a clean dataset ready for portfolio-level analysis  
+### **3.2 Data Cleaning – `01_data_cleaning.ipynb`**
+- Align all assets to a common trading calendar  
+- Handle missing values and non-trading days  
+- Produce a clean, aligned dataset ready for portfolio analysis  
 
 ---
 
@@ -120,128 +102,104 @@ This is the **complete** end-to-end design of the entire project.
 
 Implemented in `02_portfolio_construction.ipynb`.
 
-### **4.1 Portfolio Construction**
-- Build long-only, equally-weighted portfolio (weights sum to 1)  
-- Compute daily portfolio returns  
-- Build portfolio equity curve  
-
-### **4.2 Risk-Free Rate Integration**
-- Align ^IRX yield to portfolio dates  
-- Convert annual yield → daily risk-free rate using compound scaling  
-- Compute daily excess returns  
-
-### **4.3 Performance Metrics**
-Full quant-standard KPIs:
-
-- **Total return**  
-- **Realised annualised return** (using total return + actual number of days)  
-- **Daily and annualised volatility**  
-- **Sharpe Ratio:**  
-  - Daily Sharpe (mean excess return / std excess return)  
-  - Annualised Sharpe (daily × √252)  
-- **Maximum Drawdown:**  
-  - Rolling peak  
-  - Drawdown = equity / peak − 1  
-  - Max drawdown as minimum drawdown value  
+- Build an equally weighted portfolio  
+- Compute daily portfolio returns and equity curve  
+- Integrate the risk-free rate and compute excess returns  
+- Compute key performance metrics:
+  - Total and annualised return  
+  - Annualised volatility  
+  - Sharpe ratio  
+  - Maximum drawdown  
 
 ---
 
 ## **Phase 5 – Risk Analytics & Diagnostics**
 
-To be implemented in `03_analysis_and_risk.ipynb`.
+Implemented in `03_analysis_and_risk.ipynb`.
 
 Includes:
 
-- Return distribution analysis (skewness, kurtosis, tail behaviour)  
-- Correlation analysis across all assets  
-- Diversification evaluation  
-- Risk concentration & contributions  
-- Historical **VaR**, **CVaR**  
-- Stress testing (e.g., oil crash events, rate shocks)  
+- Return distribution diagnostics (skewness, kurtosis)  
+- Rolling volatility analysis (30d / 60d / 90d)  
+- Drawdown depth and duration analysis  
+- Historical and parametric **VaR / CVaR** (Normal and Student-t)  
+- Comparison of tail-risk estimates across methods  
+
+This phase establishes a robust baseline for stress testing and optimisation.
 
 ---
 
 ## **Phase 6 – Portfolio Optimisation & Rebalancing**
 
-To be implemented in `04_optimization.ipynb`.
+Planned in `04_optimization.ipynb`.
 
-Includes:
-
-- Mean-variance analysis  
-- Efficient frontier  
-- Simple rebalancing rules (periodic, threshold-based)  
-- Compare optimised vs baseline portfolio  
-- Impact on return, volatility, Sharpe, drawdown  
+- Volatility-scaled and risk-aware allocations  
+- Mean–variance optimisation  
+- Comparison against equal-weight benchmark  
+- Impact on risk-adjusted performance  
 
 ---
 
-## **Phase 7 – Dashboard & Reporting Layer**
+## **Phase 7 – Reporting & Visualisation**
 
-Planned through Power BI, Plotly, or a lightweight web app.
+Planned extensions:
 
-Includes:
-
-- Interactive dashboard for portfolio evolution  
-- Risk overview panels (drawdowns, volatility, correlations)  
-- Comparison between baseline and optimised allocations  
-- Final storytelling/report with insights for decision-makers  
+- Correlation and regime visualisation  
+- Risk contribution dashboards  
+- Lightweight reporting layer (Plotly / Power BI / web app)  
 
 ---
 
-# ▶️ Notebook Execution Flow
+## ▶️ Notebook Execution Flow
 
-Recommended execution:
+Recommended execution order:
 
-1. `00_data_download.ipynb` – Download raw prices & risk-free rate  
-2. `01_data_cleaning.ipynb` – Clean & align all series  
-3. `02_portfolio_construction.ipynb` – Build portfolio + KPIs  
-4. `03_analysis_and_risk.ipynb` – Risk analytics (planned)  
-5. `04_optimization.ipynb` – Optimisation & rebalancing (planned)  
+1. `00_data_download.ipynb`  
+2. `01_data_cleaning.ipynb`  
+3. `02_portfolio_construction.ipynb`  
+4. `03_analysis_and_risk.ipynb`  
+5. `04_optimization.ipynb`
 
 ---
 
-# ⚙️ Installation & Setup
+## ⚙️ Installation & Setup
 
 ```bash
 git clone <your-repo-url>
-cd FINANCE-PROJECT
+cd finance-project
 pip install -r requirements.txt
 ```
 ---
 
-## 🗂️ Structure of the repository
+## 🗂️ Repository structure
 
 ```text
 FINANCE-PROJECT/
 │
 ├─ data/
-│  └─ raw/
-|     └─ prices/    # One CSV per ticker (e.g. MSFT_prices.csv, CL_prices.csv, IRX_prices.csv)
+│  ├─ raw/
+│  │  └─ prices/              # One CSV per asset
 │  └─ processed/
-│     └─ asset_universe.csv
+│     ├─ asset_universe.csv   # Clean aligned prices
+│     └─ risk_free.csv        # ^IRX risk-free rate
 │
 ├─ notebooks/
 │  ├─ 00_data_download.ipynb
 │  ├─ 01_data_cleaning.ipynb
 │  ├─ 02_portfolio_construction.ipynb
-│  ├─ 03_analysis_and_risk.ipynb      # Planned / in progress
-│  └─ 04_optimization.ipynb           # Planned / in progress
+│  ├─ 03_analysis_and_risk.ipynb
+│  └─ 04_optimization.ipynb   # Planned
 │
 ├─ src/
-│  ├─ analysis/                       # Future analysis utilities (risk, correlations, etc.)
-│  ├─ data/                           # Future data handling helpers
-│  ├─ features/                       # Future feature engineering (factors, signals)
-│  ├─ viz/                            # Visualisation utilities
-│  ├─ __init__.py
-|  ├─ config.py                       # Central configuration (paths, tickers, date ranges)
-|  └─ helpers_io.py                   # IO utilities (reading/writing config, CSVs, etc.)
+│  ├─ helpers_io.py
+│  ├─ config.py
+│  └─ __init__.py
 │
-├─ dashboards/                        # Future dashboards (Power BI / web)
-├─ reports/                           # Future reports / exports
-│                        
+├─ reports/
+├─ dashboards/
+│
 ├─ requirements.txt
-├─ setup.py
-├─ .env.example                       # Template for environment variables
+├─ .env.example
 ├─ .gitignore
 └─ README.md
 ```
