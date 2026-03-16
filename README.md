@@ -165,7 +165,7 @@ Recommended execution order:
 ## ⚙️ Installation & Setup
 
 ```bash
-git clone <your-repo-url>
+git clone <https://github.com/jamesafh99/finance-project>
 cd finance-project
 pip install -r requirements.txt
 ```
