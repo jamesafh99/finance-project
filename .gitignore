@@ -1,5 +1,6 @@
 # Virtual environment
 env/
+env-finance-project/
 venv/
 
 # Python cache

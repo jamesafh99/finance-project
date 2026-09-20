@@ -9,7 +9,7 @@ ROOT_DIR = Path(__file__).resolve().parents[1]
 # 2. Loading variables from .env
 load_dotenv(ROOT_DIR / ".env")
 
-# 3. Paths (from .env variables)
+# 3. Paths from .env variables, with defaults if variables are not defined
 DATA_RAW_DIR = ROOT_DIR / os.getenv("RAW_PATH", "data/raw")
 DATA_PROCESSED_DIR = ROOT_DIR / os.getenv("PROCESSED_PATH", "data/processed")
 NOTEBOOKS_DIR = ROOT_DIR / os.getenv("NOTEBOOKS_PATH", "notebooks")
