@@ -1,205 +1,162 @@
-# Portfolio Risk & Return Analytics – Mixed Asset Portfolio (2019–2024)
+# Multi-Asset Portfolio Analytics
 
-This project implements an end-to-end Python pipeline to analyse the **risk–return profile of a diversified, mixed-asset portfolio** using daily data.  
-It covers data acquisition, cleaning, portfolio construction, performance measurement, and advanced risk analytics, with later phases focused on optimisation and reporting.
+Python-based quantitative research project for constructing, analysing and optimising a strategic multi-asset portfolio.
 
-The work is organised into clearly defined **analytical phases**, designed to be transparent, reproducible and extensible, following a professional quantitative research workflow.
+The project implements an end-to-end workflow covering market data acquisition, data cleaning, portfolio construction, performance measurement, risk analysis and portfolio optimisation using daily financial data.
 
----
+## Overview
 
-## 🎯 Central Question & Scope
+The portfolio is designed as a **long-only, unlevered portfolio denominated in USD**, with an equal-weight allocation used as the initial baseline.
 
-**Central question**
+The investable universe is intentionally small and diversified across different economic exposures:
 
-> How does the return and risk of a simulated mixed-asset portfolio evolve during 2019–2024, and which simple rebalancing adjustments could improve its risk-adjusted efficiency?
+| Instrument | Exposure | Portfolio role |
+|---|---|---|
+| `VT` | Global equities | Growth |
+| `IEF` | US Treasuries 7–10Y | Recession / disinflation defence |
+| `STIP` | US TIPS 0–5Y | Inflation protection |
+| `GSG` | Broad commodities | Stagflation / supply-shock exposure |
+| `SGOL` | Physical gold | Crisis diversification |
 
-**Sub-questions**
+`DGS3MO`, the 3-Month Treasury Constant Maturity Rate from FRED, is used separately as the USD risk-free rate proxy.
 
-1. How did the portfolio and each individual asset perform during 2019–2024?
-2. What level of risk did the portfolio assume, as reflected in volatility, drawdowns and tail-risk metrics?
-3. Is diversification effective, or is risk concentrated across correlated instruments?
-4. How efficient is the portfolio in risk-adjusted terms (Sharpe, CVaR)?
-5. Which simple allocation adjustments could plausibly improve efficiency?
+The current research period covers **2016–2025** using daily observations.
 
-The baseline setup is an **equally weighted, long-only, no-leverage portfolio**, used as a neutral benchmark throughout the analysis.
-
----
-
-## 📊 Asset Universe
-
-The portfolio uses a **small but diversified universe** across major asset classes.  
-All prices are expressed in **USD** and downloaded via `yfinance`.
-
-**Equity Index (ETF)**
-
-- `SPY` – S&P 500 ETF
-
-**Fixed Income (ETFs)**
-
-- `IEF` – iShares 7–10 Year US Treasury Bond ETF
-
-**Commodities (ETFs)**
-
-- `GLD` – Gold ETF  
-- `USO` – Oil ETF  
-- `UNG` – Natural Gas ETF
-
-**FX**
-
-- `EURUSD=X` – EUR/USD  
-- `USDJPY=X` – USD/JPY  
-
-**Risk-free rate proxy**
-
-- `^IRX` – 13-week US Treasury Bill yield, used exclusively as a **risk-free rate proxy** (stored separately from price data).
-
-Clean, aligned price data and the risk-free series are stored under:
-
-- `data/processed/asset_universe.csv`
-- `data/processed/risk_free.csv`
-
----
-
-## 🏗️ Project Roadmap
-
-This project follows a structured, end-to-end quantitative research workflow.
-
----
-
-## **Phase 1 – Problem Definition & Analytical Framework**
-
-- Define central research question and scope  
-- Select core KPIs (return, volatility, Sharpe, drawdown, VaR, CVaR)  
-- Fix modelling assumptions (daily data, long-only, equal-weight baseline)  
-- Design full project roadmap  
-
----
-
-## **Phase 2 – Asset Universe Selection**
-
-- Construct a diversified multi-asset universe  
-- Avoid redundant exposures and excessive correlation  
-- Ensure consistent currency denomination (USD)  
-- Validate data availability and liquidity  
-
----
-
-## **Phase 3 – Data Acquisition & Cleaning**
-
-### **3.1 Data Download – `00_data_download.ipynb`**
-- Download daily adjusted prices for each asset  
-- Save one CSV per instrument  
-- Download ^IRX separately as risk-free rate proxy  
-
-### **3.2 Data Cleaning – `01_data_cleaning.ipynb`**
-- Align all assets to a common trading calendar  
-- Handle missing values and non-trading days  
-- Produce a clean, aligned dataset ready for portfolio analysis  
-
----
-
-## **Phase 4 – Portfolio Construction & Performance Metrics**
-
-Implemented in `02_portfolio_construction.ipynb`.
-
-- Build an equally weighted portfolio  
-- Compute daily portfolio returns and equity curve  
-- Integrate the risk-free rate and compute excess returns  
-- Compute key performance metrics:
-  - Total and annualised return  
-  - Annualised volatility  
-  - Sharpe ratio  
-  - Maximum drawdown  
-
----
-
-## **Phase 5 – Risk Analytics & Diagnostics**
-
-Implemented in `03_analysis_and_risk.ipynb`.
-
-Includes:
-
-- Return distribution diagnostics (skewness, kurtosis)  
-- Rolling volatility analysis (30d / 60d / 90d)  
-- Drawdown depth and duration analysis  
-- Historical and parametric **VaR / CVaR** (Normal and Student-t)  
-- Comparison of tail-risk estimates across methods  
-
-This phase establishes a robust baseline for stress testing and optimisation.
-
----
-
-## **Phase 6 – Portfolio Optimisation & Rebalancing**
-
-Planned in `04_optimization.ipynb`.
-
-- Volatility-scaled and risk-aware allocations  
-- Mean–variance optimisation  
-- Comparison against equal-weight benchmark  
-- Impact on risk-adjusted performance  
-
----
-
-## **Phase 7 – Reporting & Visualisation**
-
-Planned extensions:
-
-- Correlation and regime visualisation  
-- Risk contribution dashboards  
-- Lightweight reporting layer (Plotly / Power BI / web app)  
-
----
-
-## ▶️ Notebook Execution Flow
-
-Recommended execution order:
-
-1. `00_data_download.ipynb`  
-2. `01_data_cleaning.ipynb`  
-3. `02_portfolio_construction.ipynb`  
-4. `03_analysis_and_risk.ipynb`  
-5. `04_optimization.ipynb`
-
----
-
-## ⚙️ Installation & Setup
-
-```bash
-git clone <https://github.com/jamesafh99/finance-project>
-cd finance-project
-pip install -r requirements.txt
-```
----
-
-## 🗂️ Repository structure
+## Research Workflow
 
 ```text
-FINANCE-PROJECT/
-│
-├─ data/
-│  ├─ raw/
-│  │  └─ prices/              # One CSV per asset
-│  └─ processed/
-│     ├─ asset_universe.csv   # Clean aligned prices
-│     └─ risk_free.csv        # ^IRX risk-free rate
-│
-├─ notebooks/
-│  ├─ 00_data_download.ipynb
-│  ├─ 01_data_cleaning.ipynb
-│  ├─ 02_portfolio_construction.ipynb
-│  ├─ 03_analysis_and_risk.ipynb
-│  └─ 04_optimization.ipynb   # Planned
-│
-├─ src/
-│  ├─ helpers_io.py
-│  ├─ config.py
-│  └─ __init__.py
-│
-├─ reports/
-├─ dashboards/
-│
-├─ requirements.txt
-├─ .env.example
-├─ .gitignore
-└─ README.md
+Market data
+    ↓
+Data cleaning
+    ↓
+Portfolio construction
+    ↓
+Performance & risk analysis
+    ↓
+Portfolio optimisation
 ```
+
+The workflow is implemented sequentially across the project notebooks:
+
+| Notebook | Purpose |
+|---|---|
+| `00_data_download.ipynb` | Download and validate market and risk-free data |
+| `01_data_cleaning.ipynb` | Clean, align and prepare the analytical dataset |
+| `02_portfolio_construction.ipynb` | Construct the baseline portfolio and calculate returns |
+| `03_analysis_and_risk.ipynb` | Analyse performance, drawdowns and portfolio risk |
+| `04_optimization.ipynb` | Evaluate alternative portfolio allocations |
+
+Reusable logic is kept under `src/` rather than duplicated across notebooks.
+
+## Project Structure
+
+```text
+finance-project/
+├── data/
+│   ├── raw/                    # Downloaded source data (generated locally)
+│   └── processed/              # Clean datasets used for analysis
+│
+├── notebooks/
+│   ├── 00_data_download.ipynb
+│   ├── 01_data_cleaning.ipynb
+│   ├── 02_portfolio_construction.ipynb
+│   ├── 03_analysis_and_risk.ipynb
+│   └── 04_optimization.ipynb
+│
+├── src/
+│   ├── config.py
+│   ├── data_downloader.py
+│   ├── helpers_io.py
+│   └── __init__.py
+│
+├── reports/
+│   └── figures/
+│
+├── misc/
+├── .env.example
+├── .gitignore
+├── requirements.txt
+└── README.md
+```
+
+## Quick Start
+
+Clone the repository:
+
+```bash
+git clone https://github.com/jamesafh99/finance-project.git
+cd finance-project
+```
+
+Create a virtual environment:
+
+```bash
+python -m venv env-finance-project
+```
+
+Activate it on Windows:
+
+```powershell
+.\env-finance-project\Scripts\Activate.ps1
+```
+
+Install the project dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Create a local `.env` file from the provided example:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Then run the notebooks sequentially, starting with:
+
+```text
+notebooks/00_data_download.ipynb
+```
+
+The first notebook downloads the raw datasets required by the rest of the pipeline.
+
+## Data
+
+Market data for the investable assets are downloaded from **Yahoo Finance** using `yfinance`.
+
+The USD risk-free proxy is obtained from **FRED** using the `DGS3MO` series.
+
+The acquisition pipeline performs basic structural validation before saving the raw datasets, including:
+
+- Required-column checks
+- Date validation
+- Duplicate-date detection
+- Missing-observation checks
+- Data-period coverage checks
+
+Raw observations are not silently cleaned during acquisition. Data treatment and alignment are handled separately in `01_data_cleaning.ipynb`.
+
+## Methodology
+
+The project follows a few core design principles:
+
+- The asset universe is defined before portfolio optimisation or performance analysis.
+- The baseline portfolio is long-only, unlevered and equally weighted.
+- Raw data acquisition is separated from analytical cleaning.
+- Portfolio performance is evaluated using both return and risk measures.
+- Downside and tail risk are analysed in addition to standard volatility.
+- Optimised allocations are evaluated relative to the baseline portfolio rather than in isolation.
+
+The analysis includes metrics such as annualised return, volatility, Sharpe ratio, drawdowns, VaR and CVaR, together with correlation and diversification diagnostics.
+
+## Current Status
+
+The project is currently being rebuilt and validated sequentially.
+
+`00_data_download.ipynb` and the supporting data acquisition module have been refactored and validated against the updated asset universe and FRED risk-free series.
+
+The downstream cleaning, portfolio construction, risk analysis and optimisation stages are being reviewed before final portfolio results are published here.
+
+## Disclaimer
+
+This project is for research and educational purposes only. It does not constitute investment advice.
