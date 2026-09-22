@@ -65,6 +65,7 @@ finance-project/
 │
 ├── src/
 │   ├── config.py
+│   ├── data_cleaner.py
 │   ├── data_downloader.py
 │   ├── helpers_io.py
 │   └── __init__.py
@@ -153,9 +154,9 @@ The analysis includes metrics such as annualised return, volatility, Sharpe rati
 
 The project is currently being rebuilt and validated sequentially.
 
-`00_data_download.ipynb` and the supporting data acquisition module have been refactored and validated against the updated asset universe and FRED risk-free series.
+`00_data_download.ipynb` and `01_data_cleaning.ipynb`, together with their supporting modules, have been refactored and validated against the updated asset universe and FRED risk-free series.
 
-The downstream cleaning, portfolio construction, risk analysis and optimisation stages are being reviewed before final portfolio results are published here.
+The portfolio construction, risk analysis and optimisation stages are being reviewed before final portfolio results are published here.
 
 ## Disclaimer
 

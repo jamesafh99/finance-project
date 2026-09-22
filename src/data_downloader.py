@@ -10,6 +10,21 @@ def download_assets(
         end_date: str | pd.Timestamp
     ) -> dict:
 
+    """
+    Download and validate historical price data for the asset universe
+
+    Args:
+        asset_universe: A list of asset tickers to download.
+        start_date: The start date of the requested period.
+        end_date: The exclusive end date of the requested period.
+
+    Returns:
+        dict: A dictionary containing the validated price DataFrame for each ticker.
+
+    Raises:
+        RuntimeError: If one or more asset datasets fail the required validation checks.
+    """
+
     downloaded_data = {}
     errors = {}
     warnings = {}
@@ -32,41 +47,41 @@ def download_assets(
         warnings[ticker] = []
 
         if data.empty:
-            errors[ticker].append("No data returned")
+            errors[ticker].append("⚠️ No data returned")
             continue
 
         data = data.reset_index()   # Move Date from index to column
 
         if not {"Date", "Close"}.issubset(data.columns):
-            errors[ticker].append("Missing required column: Date and/or Close")
+            errors[ticker].append("⚠️ Missing required column: Date and/or Close")
             continue
 
         if data["Date"].isna().any():
-            errors[ticker].append("Missing values found in Date")
+            errors[ticker].append("⚠️ Missing values found in Date")
 
         if data["Date"].duplicated().any():
-            warnings[ticker].append("Duplicated dates found")
+            warnings[ticker].append("⚠️ Duplicated dates found")
 
         if not data["Date"].is_monotonic_increasing:
-            warnings[ticker].append("Dates are not sorted chronologically")
+            warnings[ticker].append("⚠️ Dates are not sorted chronologically")
 
         if data["Close"].isna().all():
-            errors[ticker].append("Close column contains only missing values")
+            errors[ticker].append("⚠️ Close column contains only missing values")
 
         elif data["Close"].isna().any():
-            warnings[ticker].append("Missing values found in Close")
+            warnings[ticker].append("⚠️ Missing values found in Close")
 
         min_date = data["Date"].min()
         max_date = data["Date"].max()
 
         if min_date > start + tolerance:
             errors[ticker].append(
-                f"Data starts too late: {min_date.date()}"
+                f"⚠️ Data starts too late: {min_date.date()}"
             )
 
         if max_date < end - tolerance:
             errors[ticker].append(
-                f"Data ends too early: {max_date.date()}"
+                f"⚠️ Data ends too early: {max_date.date()}"
             )
 
         if errors[ticker]:
@@ -87,13 +102,13 @@ def download_assets(
     }
 
     if warning_tickers:
-        print("Warnings found:")
+        print("⚠️ Warnings found:")
         for ticker, ticker_warnings in warning_tickers.items():
             print(f"{ticker}: {ticker_warnings}")
 
     if failed_tickers:
         raise RuntimeError(
-            f"Asset download validation failed: {failed_tickers}"
+            f"❌ Asset download validation failed: {failed_tickers}"
         )
 
     return downloaded_data
@@ -106,6 +121,23 @@ def download_risk_free(
         date_col_name: str,
         rf_col_name: str
     ) -> pd.DataFrame:
+
+    """
+    Download and validate the risk-free rate dataset from FRED
+
+    Args:
+        rf_rate_url: The URL used to download the FRED dataset.
+        start_date: The start date of the requested period.
+        end_date: The exclusive end date of the requested period.
+        date_col_name: The original name of the date column.
+        rf_col_name: The original name of the risk-free rate column.
+
+    Returns:
+        pd.DataFrame: The validated risk-free rate dataset with standardized column names.
+
+    Raises:
+        RuntimeError: If the risk-free dataset fails the required validation checks.
+    """
 
     start = pd.Timestamp(start_date)
     end = pd.Timestamp(end_date)
@@ -123,7 +155,7 @@ def download_risk_free(
 
     if not expected_columns.issubset(risk_free.columns):
         risk_free_errors.append(
-            f"Missing required columns: {sorted(expected_columns - set(risk_free.columns))}"
+            f"⚠️ Missing required columns: {sorted(expected_columns - set(risk_free.columns))}"
         )
 
     else:
@@ -140,7 +172,7 @@ def download_risk_free(
         )
 
         if risk_free["Date"].isna().any():
-            risk_free_errors.append("Invalid or missing values found in Date")
+            risk_free_errors.append("⚠️ Invalid or missing values found in Date")
 
         else:
             risk_free = risk_free[
@@ -152,23 +184,23 @@ def download_risk_free(
             ].copy()
 
             if risk_free.empty:
-                risk_free_errors.append("No risk-free data returned for the selected period")
+                risk_free_errors.append("⚠️ No risk-free data returned for the selected period")
 
             else:
                 if risk_free["Date"].duplicated().any():
-                    risk_free_warnings.append("Duplicated dates found")
+                    risk_free_warnings.append("⚠️ Duplicated dates found")
 
                 if not risk_free["Date"].is_monotonic_increasing:
-                    risk_free_warnings.append("Dates are not sorted chronologically")
+                    risk_free_warnings.append("⚠️ Dates are not sorted chronologically")
 
                 if risk_free["Risk_Free_Rate"].isna().all():
                     risk_free_errors.append(
-                        "Risk_Free_Rate column contains only missing values"
+                        "⚠️ Risk_Free_Rate column contains only missing values"
                     )
 
                 elif risk_free["Risk_Free_Rate"].isna().any():
                     risk_free_warnings.append(
-                        "Missing observations found in Risk_Free_Rate"
+                        "⚠️ Missing observations found in Risk_Free_Rate"
                     )
 
                 min_date = risk_free["Date"].min()
@@ -176,22 +208,22 @@ def download_risk_free(
 
                 if min_date > start + tolerance:
                     risk_free_errors.append(
-                        f"Risk-free data starts too late: {min_date.date()}"
+                        f"⚠️ Risk-free data starts too late: {min_date.date()}"
                     )
 
                 if max_date < end - tolerance:
                     risk_free_errors.append(
-                        f"Risk-free data ends too early: {max_date.date()}"
+                        f"⚠️ Risk-free data ends too early: {max_date.date()}"
                     )
 
     if risk_free_warnings:
-        print("Risk-free warnings:")
+        print("⚠️ Risk-free warnings:")
         for warning in risk_free_warnings:
             print(f"- {warning}")
 
     if risk_free_errors:
         raise RuntimeError(
-            f"Risk-free download validation failed: {risk_free_errors}"
+            f"⚠️ Risk-free download validation failed: {risk_free_errors}"
         )
 
     return risk_free
@@ -203,6 +235,19 @@ def save_raw_data(
         raw_dir: Path,
         rf_name: str
     ) -> None:
+
+    """
+    Save validated asset and risk-free datasets to the raw data directory
+
+    Args:
+        downloaded_data: A dictionary containing the validated asset price datasets.
+        risk_free: The validated risk-free rate DataFrame.
+        raw_dir: The directory where the raw datasets will be saved.
+        rf_name: The name used for the risk-free rate output file.
+
+    Returns:
+        None
+    """
 
     files_saved = []
 
@@ -220,5 +265,5 @@ def save_raw_data(
     files_saved.append(risk_free_filename)
 
     # Final summary
-    print("All datasets passed required validation and were saved successfully.")
-    print(f"{len(files_saved)} files saved in {raw_dir}")
+    print("✅ All datasets passed required validation and were saved successfully.")
+    print(f"✅ {len(files_saved)} files saved in {raw_dir}")
